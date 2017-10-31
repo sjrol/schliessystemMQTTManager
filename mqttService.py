@@ -20,7 +20,7 @@ print(credentials.mqttBrokerURL)
 client = mqtt.Client()
 client.on_connect = on_connect
 client.on_message = on_message
-client.connect(host="s3.sjr-ol.de")
+client.connect(host=credentials.mqttBrokerURL)
 client.subscribe(MQTT_TOPIC_BASE,2)
 client.loop_forever()
 
