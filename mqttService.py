@@ -3,6 +3,8 @@
 import paho.mqtt.client as mqtt
 import requests,json,time
 
+MQTT_TOPIC_BASE = "/door/buero/"
+
 def on_connect(client, userdata, flags, rc):
     print("Connected with result code "+str(rc))
 
@@ -17,7 +19,7 @@ client = mqtt.Client()
 client.on_connect = on_connect
 client.on_message = on_message
 client.connect(host="s3.sjr-ol.de")
-client.subscribe("/door/buero/id",2)
+client.subscribe(MQTT_TOPIC_BASE,2)
 client.loop_forever()
 
 
