@@ -56,6 +56,31 @@ void ReceivedMessage(char* topic, byte* payload, unsigned int length) {
         break;                
     } 
 }
+
+void LEDControl(int color){
+  switch(color){
+      case '0':
+          digitalWrite(D2, LOW);
+          digitalWrite(D3, LOW);
+        break;
+      case '1':
+          digitalWrite(D2, HIGH);
+          digitalWrite(D3, LOW);
+        break;
+      case '2':
+          digitalWrite(D2, LOW);
+          digitalWrite(D3, HIGH);
+         break;
+      case '3':
+          digitalWrite(D2, HIGH);
+          digitalWrite(D3, HIGH);
+        break;
+      default:
+          digitalWrite(D2, LOW);
+          digitalWrite(D3, LOW);
+        break;                
+    }
+}
 //-------------------------------------
 //-------------------------------------
 bool Connect() {
@@ -77,6 +102,10 @@ void setup() {
   
   pinMode(D1, OUTPUT);
   digitalWrite(D1, LOW);
+  pinMode(D2, OUTPUT);
+  digitalWrite(D2, LOW);
+  pinMode(D3, OUTPUT);
+  digitalWrite(D3, LOW);
   
   Serial.begin(9600);
 
@@ -120,14 +149,16 @@ void loop() {
   client.loop();
    if(relaisState - millis() >= 1) {
     digitalWrite(D1, HIGH);
+    LEDControl(2);
    }else{
-    digitalWrite(D1, LOW);  
+    digitalWrite(D1, LOW); 
+    LEDControl(0); 
    };
 
    // Look for new cards
    if(lastread+2000 < millis()){
               if ( ! mfrc522.PICC_IsNewCardPresent()) {
-                delay(50);
+                delay(100);
                 return;
               }
               // Select one of the cards
@@ -143,5 +174,7 @@ void loop() {
               }
               client.publish(mqtt_txtopic, String(code).c_str());
               lastread = millis();
+   }else{
+    LEDControl(3);
    }
 }   
