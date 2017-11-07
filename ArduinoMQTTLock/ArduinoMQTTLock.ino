@@ -158,7 +158,7 @@ void loop() {
    // Look for new cards
    if(lastread+2000 < millis()){
               if ( ! mfrc522.PICC_IsNewCardPresent()) {
-                delay(100);
+                delay(500);
                 return;
               }
               // Select one of the cards
