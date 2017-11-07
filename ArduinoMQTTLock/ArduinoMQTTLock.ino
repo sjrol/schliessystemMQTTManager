@@ -49,6 +49,9 @@ void ReceivedMessage(char* topic, byte* payload, unsigned int length) {//Setzt n
       case 'c':
         relaisState = 0+millis();//close
         break;
+      case 'e':
+        LEDControl(1);
+        delay(2000);
       default:
         break;                
     } 
