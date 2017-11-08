@@ -21,8 +21,8 @@ const char* mqtt_username = "user"; //MQTT PW
 const char* mqtt_password = "admin"; //MQTT Username
 const char* clientID = "t1"; //MQTT Client id
 
-double relaisState = 0;
-int lastread = 0;
+double relaisState = 0; // open / close
+int lastread = 0; // debounce RFID
 //-------------------------------------
 //-------------------------------------
 
@@ -32,6 +32,8 @@ WiFiClient wifiClient;
 PubSubClient client(mqtt_server, 1883, wifiClient); // 1883 is the listener port for the Broker
 //-------------------------------------
 //-------------------------------------
+//void uebernimmt rx vom mqtt server 
+//switch setzt zeiten/error
 void ReceivedMessage(char* topic, byte* payload, unsigned int length) {//Setzt neue Nachrichten des rx Topics in Relaiszeiten um
     switch((char)payload[0]){
       case 's':
@@ -57,6 +59,8 @@ void ReceivedMessage(char* topic, byte* payload, unsigned int length) {//Setzt n
     } 
 }
 
+
+//void setzt status led r g rg=y 
 void LEDControl(int color){
   switch(color){
       case '0':
@@ -96,33 +100,28 @@ bool Connect() {
 //------------------------------------
 //-------------------------------------
 void setup() {
-  
+  //init rfid reader
   SPI.begin();
   mfrc522.PCD_Init();
-  
-  pinMode(D1, OUTPUT);
-  digitalWrite(D1, LOW);
-  pinMode(D2, OUTPUT);
-  digitalWrite(D2, LOW);
-  pinMode(D3, OUTPUT);
-  digitalWrite(D3, LOW);
-  
   Serial.begin(9600);
 
-  Serial.print("Connecting to ");
-  Serial.println(ssid);
+  //Pinmode setzen
+  pinMode(D1, OUTPUT);//relais
+  digitalWrite(D1, LOW);
+  pinMode(D2, OUTPUT);//led r
+  digitalWrite(D2, LOW);
+  pinMode(D3, OUTPUT);//led g
+  digitalWrite(D3, LOW);
 
   // Connect to the WiFi
   WiFi.begin(ssid, wifi_password);
-
   // Wait until the connection has been confirmed before continuing
   while (WiFi.status() != WL_CONNECTED) {
     delay(500);
     Serial.print(".");
   }
 
-  // Debugging - Output the IP Address of the ESP8266
-  Serial.println("WiFi connected");
+  //DEBUG IP OUTPUT
   Serial.print("IP address: ");
   Serial.println(WiFi.localIP());
 
@@ -141,13 +140,18 @@ void setup() {
 //-------------------------------------
 void loop() {
 
-  
+  //wifi reconnect
   if (!client.connected()) {
     Connect();
   }
+
   
+  //MQTT Abfrage rx tx
   client.loop();
-   if(relaisState - millis() >= 1) {
+
+
+  //relais state setzen
+  if(relaisState - millis() >= 1) {
     digitalWrite(D1, HIGH);
     LEDControl(2);
    }else{
