@@ -14,7 +14,7 @@ MFRC522 mfrc522(SS_PIN, RST_PIN); //RFID Board Setup
 const char* ssid = "***";  //Wlan ssid setzen
 const char* wifi_password = "***"; // Wlan Passwort setzen
 
-const char* mqtt_server = "136.243.24.244";// MQTT Broker Server IP setzen
+const char* mqtt_server = "***.***.***.***";// MQTT Broker Server IP setzen
 const char* mqtt_txtopic = "/door/buero/id"; // MQTT Publish Topic setzen
 const char* mqtt_rxtopic = "/door/buero/id/state"; // MQTT Subscribe Topic setzen
 const char* mqtt_username = "user"; //MQTT PW
