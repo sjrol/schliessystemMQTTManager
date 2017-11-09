@@ -4,7 +4,7 @@ import paho.mqtt.client as mqtt
 import requests,json,time
 import credentials
 
-MQTT_TOPIC_BASE = "/door/buero/id"
+MQTT_TOPIC_BASE = "A0:20:A6:14:D7:7A"
 
 def on_connect(client, userdata, flags, rc):
     print("Connected with result code "+str(rc))
@@ -18,6 +18,7 @@ def on_message(client, userdata, msg):
 
 print(credentials.mqttBrokerURL)
 client = mqtt.Client()
+client.username_pw_set(credentials.mqtt_username, credentials.mqtt_password)
 client.on_connect = on_connect
 client.on_message = on_message
 client.connect(host=credentials.mqttBrokerURL)
