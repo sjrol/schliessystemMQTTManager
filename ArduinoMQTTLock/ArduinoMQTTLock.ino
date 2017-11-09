@@ -1,6 +1,8 @@
 #include <ESP8266WiFi.h> //ESP Library
 #include <PubSubClient.h>  //MQTT Library
 #include "MFRC522.h" //RFID Library
+#include "ArduinoCredentials.h"
+
 
 
 
@@ -11,15 +13,14 @@
 MFRC522 mfrc522(SS_PIN, RST_PIN); //RFID Board Setup
 
 
-const char* ssid = "***";  //Wlan ssid setzen
-const char* wifi_password = "***"; // Wlan Passwort setzen
 
-const char* mqtt_server = "***.***.***.***";// MQTT Broker Server IP setzen
-const char* mqtt_txtopic = "/door/buero/id"; // MQTT Publish Topic setzen
-const char* mqtt_rxtopic = "/door/buero/id/state"; // MQTT Subscribe Topic setzen
-const char* mqtt_username = "user"; //MQTT PW
-const char* mqtt_password = "admin"; //MQTT Username
-const char* clientID = "t1"; //MQTT Client id
+
+String macadress = WiFi.macAddress();
+
+const char* mqtt_txtopic = String(macadress).c_str(); // MQTT Publish Topic setzen
+const char* mqtt_rxtopic = String(macadress).c_str(); // MQTT Subscribe Topic setzen
+
+const char* clientID = String(macadress).c_str(); //MQTT Client id
 
 double relaisState = 0; // open / close
 int lastread = 0; // debounce RFID
