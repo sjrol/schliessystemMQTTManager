@@ -1,0 +1,26 @@
+Fuer ein Schliessystem wird benoetigt: [Reichelt Referenz wenn vorhanden]
+
+1   1x WeMos D1 Mini
+2   1x WeMos D1 Mini Power Shield
+3   1x Wemos D1 Mini Relais Shield
+4   1x Netzteil 12V/3A
+5   Jumper Wire fuer interne Verkabelung
+6   1x Duo-LED, 10 mm, bedrahtet, 3-Pin, rt/gn, 90 mcd, 50° [LED 10 RG-3]
+7   1x Montageclip fuer 10mm LED [MONTAGERING 10MM]
+8   2x Widerstand 33 Ohm [1/4W 33]
+9   1x Controllergehaeuse [GEH KS 35]
+10   1x Readergehaeuse [SP 2029 GR]
+
+11   1x D-SUB Buchse 9Pol [D-SUB BU 09]
+12   1x D-SUB Stecker 9Pol [D-SUB ST 09]
+13   1x D-SUB Kabel 9Pol m-f [AK 2303]
+
+Sollte bei der Verbindung von Reader zu Controller NICHT die Moeglichkeit bestehen, einen D-SUB Stecker zu verlegen, so ist STATT der Positionen 11,12,13 die Positionen  zu bestellen
+
+14   2x D-SUB Buchse 9Pol [D-SUB BU 09]
+15   2x D-SUB Stecker 9Pol [D-SUB ST 09]
+16   1x Flachbandkabel, 10-pol., 3m-Ring [AWG 28-10F 3M]
+17   2x D-SUB-Kappe für 9-polig D-Sub [KAPPE CG9G]
+
+
+
