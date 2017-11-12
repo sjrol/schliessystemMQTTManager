@@ -3,7 +3,6 @@
 import paho.mqtt.client as mqtt
 import requests,json,time
 import credentials
-import time
 
 MQTT_TOPIC_BASE = "A0:20:A6:14:D7:7A"
 
@@ -13,7 +12,6 @@ def on_connect(client, userdata, flags, rc):
 def on_message(client, userdata, msg):
     print("recived message \"" + str(msg.payload.decode('utf-8')) + "\" in " + str(msg.topic))
     if str(msg.payload.decode('utf-8')) =="1301970":
-            time.sleep(1)
             client.publish(str(msg.topic)+"/state", str('s'))
     else :
             client.publish(str(msg.topic)+"/state", str("l"))
