@@ -5,8 +5,7 @@ import requests,json,time
 import credentials
 import mysql.connector as mariadb
 
-MQTT_TOPIC_BASE = "/A0:20:A6:14:D7:7A"
-MAC = "A020A614D77A"
+MQTT_TOPIC_BASE = "/+"
 
 def on_connect(client, userdata, flags, rc):
     print("Connected with result code "+str(rc))
@@ -14,6 +13,7 @@ def on_connect(client, userdata, flags, rc):
 def on_message(client, userdata, msg):
     token = str(msg.payload.decode('utf-8'))
     top = str(msg.topic)
+    MAC=top.replace(":","").upper().replace("/","")
     print("recived message \"" + token + "\" in " + top)
     cursor.execute("SELECT `relay`.`mac` FROM `token` INNER JOIN `user` ON(`token`.`user` = `user`.`id`) INNER JOIN `user_relay` ON(`user`.`id` = `user_relay`.`user`) INNER JOIN `relay` ON(`user_relay`.`relay` = `relay`.`id`) INNER JOIN `reader_relay` ON(`relay`.`id` = `reader_relay`.`relay`) INNER JOIN `reader` ON(`reader_relay`.`reader` = `reader`.`id`) WHERE `token`.`id` = '%s' AND `reader`.`mac` = '%s'" % (token,MAC))
     sucess = False
