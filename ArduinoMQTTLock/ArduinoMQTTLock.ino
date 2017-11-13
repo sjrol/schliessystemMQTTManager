@@ -19,6 +19,9 @@ String mac = WiFi.macAddress();
 
 double relaisState = 0; // open / close
 int lastread = 0; // debounce RFID
+double relaisSet = 0;
+double relaisLastSet = 0;
+bool messagerecieved = 0;
 //-------------------------------------
 //-------------------------------------
 
@@ -31,6 +34,7 @@ PubSubClient client(mqtt_server, 1883, wifiClient); // 1883 is the listener port
 //void uebernimmt rx vom mqtt server
 //switch setzt zeiten/error
 void ReceivedMessage(char* topic, byte* payload, unsigned int length) {//Setzt neue Nachrichten des rx Topics in Relaiszeiten um
+  messagerecieved=1;
   switch ((char)payload[0]) {
     case 's':
       relaisState = 3000 + millis(); //Kurz 3 sec
@@ -59,19 +63,19 @@ void ReceivedMessage(char* topic, byte* payload, unsigned int length) {//Setzt n
 //void setzt status led r g rg=y
 void LEDControl(int color) {
   switch (color) {
-    case '0':
+    case 0:
       digitalWrite(D2, LOW);
       digitalWrite(D3, LOW);
       break;
-    case '1':
+    case 1:
       digitalWrite(D2, HIGH);
       digitalWrite(D3, LOW);
       break;
-    case '2':
+    case 2:
       digitalWrite(D2, LOW);
       digitalWrite(D3, HIGH);
       break;
-    case '3':
+    case 3:
       digitalWrite(D2, HIGH);
       digitalWrite(D3, HIGH);
       break;
@@ -105,7 +109,7 @@ void setup() {
   pinMode(D1, OUTPUT);//relais
   digitalWrite(D1, LOW);
   pinMode(D2, OUTPUT);//led r
-  digitalWrite(D2, LOW);
+  digitalWrite(D2, HIGH);
   pinMode(D3, OUTPUT);//led g
   digitalWrite(D3, LOW);
 
@@ -155,12 +159,13 @@ void loop() {
   } else {
     digitalWrite(D1, LOW);
     LEDControl(0);
+    messagerecieved=0;
   };
 
   // Look for new cards
   if (lastread + 2000 < millis()) {
     if ( ! mfrc522.PICC_IsNewCardPresent()) {
-      delay(500);
+      delay(200);
       return;
     }
     // Select one of the cards
@@ -176,7 +181,9 @@ void loop() {
     }
     client.publish(String(mac).c_str(), String(code).c_str());
     lastread = millis();
-  } else {
+  } else if(messagerecieved==0) {
     LEDControl(3);
+  } else{
+    //blank
   }
 }
