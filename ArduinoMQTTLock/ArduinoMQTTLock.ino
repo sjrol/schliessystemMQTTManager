@@ -151,7 +151,6 @@ void loop() {
   //MQTT Abfrage rx tx
   client.loop();
 
-
   //relais state setzen
   if (relaisState - millis() >= 1) {
     digitalWrite(D1, HIGH);
@@ -168,13 +167,14 @@ void loop() {
       delay(200);
       return;
     }
+
     // Select one of the cards
     if ( ! mfrc522.PICC_ReadCardSerial()) {
       delay(50);
       return;
     }
 
-
+    
     long code = 0;
     for (byte i = 0; i < mfrc522.uid.size; i++) {
       code = ((code + mfrc522.uid.uidByte[i]) * 10);
