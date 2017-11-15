@@ -1,27 +1,25 @@
 #include <ESP8266WiFi.h> //ESP Library
 #include <PubSubClient.h>  //MQTT Library
 #include "MFRC522.h" //RFID Library
-#include "ArduinoCredentials.h"
 
+#include "LEDControl.h"
+#include "RecievedMessage.h"
+#include "ArduinoCredentials.h"// Wifi & OTA Zugang
 
-
+//#include "ArduinoOTA.h"
 
 #define RST_PIN 16 //REsET PIN RFID Board
 #define SS_PIN  2 //Sync PIN RFID Board
 
-
 MFRC522 mfrc522(SS_PIN, RST_PIN); //RFID Board Setup
-
-
-
 
 String mac = WiFi.macAddress();
 
-double relaisState = 0; // open / close
+
 int lastread = 0; // debounce RFID
 double relaisSet = 0;
 double relaisLastSet = 0;
-bool messagerecieved = 0;
+
 //-------------------------------------
 //-------------------------------------
 
@@ -31,66 +29,15 @@ WiFiClient wifiClient;
 PubSubClient client(mqtt_server, 1883, wifiClient); // 1883 is the listener port for the Broker
 //-------------------------------------
 //-------------------------------------
-//void uebernimmt rx vom mqtt server
-//switch setzt zeiten/error
-void ReceivedMessage(char* topic, byte* payload, unsigned int length) {//Setzt neue Nachrichten des rx Topics in Relaiszeiten um
-  messagerecieved=1;
-  switch ((char)payload[0]) {
-    case 's':
-      relaisState = 3000 + millis(); //Kurz 3 sec
-      break;
-    case 'm':
-      relaisState = 6000 + millis(); //Mittel 6 sec
-      break;
-    case 'l':
-      relaisState = 12000 + millis(); //Lang 12 sec
-      break;
-    case 'o':
-      relaisState = 86400000 + millis();//Dauer offen (1d)
-      break;
-    case 'c':
-      relaisState = 0 + millis(); //close
-      break;
-    case 'e':
-      LEDControl(1);
-      delay(2000);
-    default:
-      break;
-  }
-}
 
 
-//void setzt status led r g rg=y
-void LEDControl(int color) {
-  switch (color) {
-    case 0:
-      digitalWrite(D2, LOW);
-      digitalWrite(D3, LOW);
-      break;
-    case 1:
-      digitalWrite(D2, HIGH);
-      digitalWrite(D3, LOW);
-      break;
-    case 2:
-      digitalWrite(D2, LOW);
-      digitalWrite(D3, HIGH);
-      break;
-    case 3:
-      digitalWrite(D2, HIGH);
-      digitalWrite(D3, HIGH);
-      break;
-    default:
-      digitalWrite(D2, LOW);
-      digitalWrite(D3, LOW);
-      break;
-  }
-}
+
 //-------------------------------------
 //-------------------------------------
 bool Connect() {
   // Connect to MQTT Server and subscribe to the topic
   if (client.connect((String(mac + "ID").c_str()), mqtt_username, mqtt_password)) {
-    client.subscribe((String(mac + "/state").c_str()));
+    client.subscribe((String("/"+mac + "/state").c_str()));
     return true;
   }
   else {
@@ -179,7 +126,7 @@ void loop() {
     for (byte i = 0; i < mfrc522.uid.size; i++) {
       code = ((code + mfrc522.uid.uidByte[i]) * 10);
     }
-    client.publish(String(mac).c_str(), String(code).c_str());
+    client.publish(String("/"+mac).c_str(), String(code).c_str());
     lastread = millis();
   } else if(messagerecieved==0) {
     LEDControl(3);
