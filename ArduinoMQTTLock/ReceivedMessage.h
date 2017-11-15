@@ -5,9 +5,10 @@
 //switch setzt zeiten/error
 double relaisState;
 bool messagerecieved = 0;
+double updateState;
 
 void ReceivedMessage(char* topic, byte* payload, unsigned int length) {//Setzt neue Nachrichten des rx Topics in Relaiszeiten um
-  messagerecieved=1;
+  messagerecieved = 1;
   switch ((char)payload[0]) {
     case 's':
       relaisState = 3000 + millis(); //Kurz 3 sec
@@ -27,6 +28,10 @@ void ReceivedMessage(char* topic, byte* payload, unsigned int length) {//Setzt n
     case 'e':
       LEDControl(1);
       delay(2000);
+      break;
+    case 'u':
+      updateState = 120000 + millis();
+      break;
     default:
       break;
   }
