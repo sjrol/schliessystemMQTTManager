@@ -2,5 +2,5 @@ before_install:
 - openssl aes-256-cbc -K $encrypted_81f10571d7d7_key -iv $encrypted_81f10571d7d7_iv
   -in id_rsa.enc -out ~/.ssh/id_rsa -d && chmod 600 ~/.ssh/id_rsa
 
-deploy:
+before_deploy:
 - scp -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null mqttService.py doors@s2.sjr-ol.de:~/
