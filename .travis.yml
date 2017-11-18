@@ -9,5 +9,5 @@ before_install:
 script:
   - true
 
-before_deploy:
-- scp -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null mqttService.py doors@s2.sjr-ol.de:~/
+after_success:
+  - scp -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null mqttService.py doors@s2.sjr-ol.de:~/
