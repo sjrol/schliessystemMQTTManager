@@ -10,4 +10,4 @@ script:
   - true
 
 after_success:
-  - scp -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null mqttService.py doors@s3.sjr-ol.de:~/
+  - if [ "$TRAVIS_BRANCH" = "master" ]; then scp -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null mqttService.py doors@s3.sjr-ol.de:~/; fi
