@@ -1,0 +1,13 @@
+language: python
+python:
+  - "3.6"
+
+before_install:
+- openssl aes-256-cbc -K $encrypted_81f10571d7d7_key -iv $encrypted_81f10571d7d7_iv
+  -in id_rsa.enc -out ~/.ssh/id_rsa -d && chmod 600 ~/.ssh/id_rsa
+
+script:
+  - true
+
+after_success:
+  - if [ "$TRAVIS_BRANCH" = "master" ]; then scp -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null mqttService.py doors@s3.sjr-ol.de:~/; fi
