@@ -76,9 +76,9 @@ void setup() {
   else {
     Serial.println("Connection Failed!");
   }
-  
+
   client.publish(String("/info").c_str(), String("Hooray, " + mac + " is online now. Hello, my current IP is" + WiFi.localIP()).c_str());
-//=========================================================================================================
+  //=========================================================================================================
 
   ArduinoOTA.setPort(ota_port);
 
@@ -139,7 +139,7 @@ void loop() {
       delay(200);
       return;
     }
-
+    Serial.println("\nEnd"); 
     // Select one of the cards
     if ( ! mfrc522.PICC_ReadCardSerial()) {
       delay(50);
@@ -151,7 +151,9 @@ void loop() {
     for (byte i = 0; i < mfrc522.uid.size; i++) {
       code = ((code + mfrc522.uid.uidByte[i]) * 10);
     }
-    client.publish(String("/" + mac).c_str(), String(code).c_str());
+    char longcode [15];
+    sprintf(longcode,"%#015d",code);
+    client.publish(String("/" + mac).c_str(), longcode);
     lastread = millis();
   } else if (messagerecieved == 0) {
     LEDControl(3);

@@ -37,7 +37,4 @@ void ReceivedMessage(char* topic, byte* payload, unsigned int length) {//Setzt n
   }
 }
 
-
-
-
 #endif

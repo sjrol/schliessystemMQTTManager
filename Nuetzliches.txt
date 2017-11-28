@@ -1,0 +1,16 @@
+Neue MQTT-Nutzer-Passwort Kombi anlegen
+-Auf dem Server:
+--1. sudo mosquitto_passwd /etc/mosquitto/passwd [username]
+--2. Passwort eingeben
+--3. sudo mosquitto -c /etc/mosquitto/mosquitto.conf
+--4. sudo service mosquitto restart
+
+Bestehende MQTT-Nutzer-Passwort Kombi entfernen
+-Auf dem Server:
+--1. sudo mosquitto_passwd -D /etc/mosquitto/passwd [username]
+--2. sudo mosquitto -c /etc/mosquitto/mosquitto.conf
+--3. sudo service mosquitto restart
+
+
+
+

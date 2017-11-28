@@ -6,7 +6,6 @@ import credentials
 import mysql.connector as mariadb
 
 MQTT_TOPIC_BASE = "/+"
-
 def on_connect(client, userdata, flags, rc):
     print("Connected with result code "+str(rc))
 
