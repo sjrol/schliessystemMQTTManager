@@ -19,7 +19,9 @@ def on_message(client, userdata, msg):
         client.publish("/%s/state" % (relayMac), str('s'))
         success = True
         print("Access granted for user %s on door %s with reader %s" % (userName, relayName, readerName))
-    if not(success):
+    if (success):
+        client.publish(topic+"/state", str('s'))
+    else:
         client.publish(topic+"/state", str('e'))
         print("Access denied for token %s" % (token))
 
