@@ -11,7 +11,7 @@ void ReceivedMessage(char* topic, byte* payload, unsigned int length) {//Setzt n
   messagerecieved = 1;
   switch ((char)payload[0]) {
     case 's':
-      relaisState = 3000 + millis(); //Kurz 3 sec
+      relaisState = 3000 + millis(); //Kurz 3 sec 
       break;
     case 'm':
       relaisState = 6000 + millis(); //Mittel 6 sec
@@ -26,13 +26,51 @@ void ReceivedMessage(char* topic, byte* payload, unsigned int length) {//Setzt n
       relaisState = 0 + millis(); //close
       break;
     case 'e':
-      LEDControl(1);
+      LEDControl(1);  //Error LED Rot
       delay(2000);
       break;
-    case 'u':
+    case 'u':         //2 min Upsdate modus
       updateState = 120000 + millis();
       break;
-    default:
+
+    case 'p': /?LED Party mode
+      LEDControl(1);
+      delay(100);
+      LEDControl(2);
+      delay(100);
+      LEDControl(3);
+      delay(100);
+      LEDControl(1);
+      delay(100);
+      LEDControl(2);
+      delay(100);
+      LEDControl(3);
+      delay(100);
+      LEDControl(1);
+      delay(100);
+      LEDControl(2);
+      delay(100);
+      LEDControl(3);
+      delay(100);
+      LEDControl(0);
+      break;
+    default: // Default LED 4 mal Blink gelb
+      LEDControl(3);
+      delay(400);
+      LEDControl(0);
+      delay(400);
+      LEDControl(3);
+      delay(400);
+      LEDControl(0);
+      delay(400);
+      LEDControl(3);
+      delay(400);
+      LEDControl(0);
+      delay(400);
+      LEDControl(3);
+      delay(400);
+      LEDControl(0);
+      delay(400);
       break;
   }
 }
