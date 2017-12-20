@@ -118,7 +118,7 @@ void loop() {
   if (!client.connected()) Connect();
 
   //MQTT Abfrage rx tx
-  client.loop();
+  if(!client.loop()) Connect();
 
   if (updateState - millis() >= 1) ArduinoOTA.handle();
 
