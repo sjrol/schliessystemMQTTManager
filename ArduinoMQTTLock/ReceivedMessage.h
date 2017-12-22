@@ -32,7 +32,10 @@ void ReceivedMessage(char* topic, byte* payload, unsigned int length) {//Setzt n
     case 'u':         //2 min Upsdate modus
       updateState = 120000 + millis();
       break;
-
+    case 'r': // Restart
+      ESP.restart();
+      break;
+      
     case 'p': //LED Party mode
       LEDControl(1);
       delay(100);
