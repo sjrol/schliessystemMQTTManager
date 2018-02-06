@@ -31,7 +31,7 @@ PubSubClient client(mqtt_server, 1883, wifiClient); // 1883 is the listener port
 
 bool Connect() {
   // Connect to MQTT Server and subscribe to the topic
-  if (client.connect((String(mac + " ID " + NAME).c_str()), mqtt_username, mqtt_password)) {
+  if (client.connect((String(mac + " ID ").c_str()), mqtt_username, mqtt_password)) {
     client.subscribe((String("/" + mac + "/state").c_str()));
     return true;
   }
@@ -77,13 +77,13 @@ void setup() {
     Serial.println("Connection Failed!");
   }
 
-  client.publish(String("/info").c_str(), String("Hooray, " + mac +" aka " + NAME + " is online now. Hello, my current IP is" + WiFi.localIP()).c_str());
+  client.publish(String("/info").c_str(), String("Hooray, " + mac + " is online now. Hello, my current IP is" + WiFi.localIP()).c_str());
   //=========================================================================================================
 
   ArduinoOTA.setPort(ota_port);
 
 
-  ArduinoOTA.setHostname(String(mac + " " +NAME).c_str());  // Hostname == NAME + ChipMac
+  ArduinoOTA.setHostname(String(mac).c_str());  // Hostname == ChipMac
 
 
   ArduinoOTA.setPassword(ota_password);
