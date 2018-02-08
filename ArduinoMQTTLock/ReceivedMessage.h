@@ -30,9 +30,7 @@ void ReceivedMessage(char* topic, byte* payload, unsigned int length) {//Setzt n
       delay(2000);
       break;
     case 'u':         //2 min Upsdate modus
-
-      
-
+      updateState = 3000 + millis(); //close 
       break;
     case 'r': // Restart
       ESP.restart();

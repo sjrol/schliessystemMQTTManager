@@ -95,7 +95,7 @@ void loop() {
   if(!client.loop()) Connect();
 
   if (updateState - millis() >= 1) {
-    ESPhttpUpdate.update("192.168.0.2", 80, "/arduino.bin");
+    checkForUpdates();
   }
 
 

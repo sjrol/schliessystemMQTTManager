@@ -2,7 +2,7 @@
 #define __CHECKFORUPDATES_H__
 
 void checkForUpdates() {
-  String mac = WiFi.macAddress();
+  LEDControl(3);
   String fwURL = String( fwUrlBase );
   fwURL.concat( mac );
   String fwVersionURL = fwURL;
@@ -11,6 +11,7 @@ void checkForUpdates() {
   client.publish(String("/info").c_str(), "Checking for firmware updates." );
   client.publish(String("/info").c_str(), "Firmware version URL: " );
   client.publish(String("/info").c_str(), String(fwVersionURL).c_str());
+
 
   HTTPClient httpClient;
   httpClient.begin( fwVersionURL );
@@ -45,6 +46,7 @@ void checkForUpdates() {
     client.publish(String("/info").c_str(), "Firmware version check failed, got HTTP response code " );
     client.publish(String("/info").c_str(), String(httpCode).c_str() );
   }
+  LEDControl(0);
   httpClient.end();
 }
 
