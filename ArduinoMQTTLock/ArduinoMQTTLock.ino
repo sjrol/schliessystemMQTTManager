@@ -1,8 +1,13 @@
+const int FW_VERSION = 1001;
+
+
+
 #include <ESP8266WiFi.h> //ESP Library
 #include <PubSubClient.h>  //MQTT Library
 #include "MFRC522.h" //RFID Library
-#include "ArduinoOTA.h"
 
+#include <ESP8266HTTPClient.h>
+#include <ESP8266httpUpdate.h>
 
 #include "LEDControl.h"
 #include "ReceivedMessage.h"
@@ -79,37 +84,9 @@ void setup() {
 
   client.publish(String("/info").c_str(), String("Hooray, " + mac + " is online now. Hello, my current IP is" + WiFi.localIP()).c_str());
   //=========================================================================================================
-
-  ArduinoOTA.setPort(ota_port);
-
-
-  ArduinoOTA.setHostname(String(mac).c_str());  // Hostname == ChipMac
-
-
-  ArduinoOTA.setPassword(ota_password);
-
-  ArduinoOTA.onStart([]() {
-    relaisState = 0 + millis(); //close
-    digitalWrite(D1, LOW);
-    digitalWrite(D2, LOW);
-    digitalWrite(D3, LOW);
-  });
-  ArduinoOTA.onEnd([]() {
-    Serial.println("\nEnd");
-  });
-  ArduinoOTA.onProgress([](unsigned int progress, unsigned int total) {
-    Serial.printf("Progress: %u%%\r", (progress / (total / 100)));
-  });
-  ArduinoOTA.onError([](ota_error_t error) {
-    client.publish(String("/info").c_str(), String(mac + "error" + String(error)).c_str());
-    if (error == OTA_AUTH_ERROR)  client.publish(String("/info").c_str(), String(mac + "Auth Failed").c_str());
-    else if (error == OTA_BEGIN_ERROR) client.publish(String("/info").c_str(), String(mac + "Begin Failed").c_str());
-    else if (error == OTA_CONNECT_ERROR) client.publish(String("/info").c_str(), String(mac + "Connect Failed").c_str());
-    else if (error == OTA_RECEIVE_ERROR) client.publish(String("/info").c_str(), String(mac + "Receive Failed").c_str());
-    else if (error == OTA_END_ERROR) client.publish(String("/info").c_str(), String(mac + "End Failed").c_str());
-  });
-  ArduinoOTA.begin();
 }
+
+#include "checkForUpdates.h"
 
 //-------------------------------------
 //-------------------------------------
@@ -121,7 +98,9 @@ void loop() {
   //MQTT Abfrage rx tx
   if(!client.loop()) Connect();
 
-  if (updateState - millis() >= 1) ArduinoOTA.handle();
+  if (updateState - millis() >= 1) {
+    checkForUpdates();
+  }
 
 
   //relais state setzen
