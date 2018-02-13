@@ -1,3 +1,7 @@
+const int FW_VERSION = 1001;
+
+
+
 #include <ESP8266WiFi.h> //ESP Library
 #include <PubSubClient.h>  //MQTT Library
 #include "MFRC522.h" //RFID Library

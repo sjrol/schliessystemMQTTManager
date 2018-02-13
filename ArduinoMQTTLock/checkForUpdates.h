@@ -2,9 +2,10 @@
 #define __CHECKFORUPDATES_H__
 
 void checkForUpdates() {
+  client.publish(String("/info").c_str(), String(ESPhttpUpdate.getLastErrorString()).c_str());
   LEDControl(3);
   String fwURL = String( fwUrlBase );
-  fwURL.concat( mac );
+  fwURL.concat( "arduino" );
   String fwVersionURL = fwURL;
   fwVersionURL.concat( ".version" );
 
@@ -26,7 +27,9 @@ void checkForUpdates() {
 
       String fwImageURL = fwURL;
       fwImageURL.concat( ".bin" );
+      client.publish(String("/info").c_str(), String(fwImageURL).c_str() );
       t_httpUpdate_return ret = ESPhttpUpdate.update( fwImageURL );
+      client.publish(String("/info").c_str(), "1" );
 
       switch(ret) {
         case HTTP_UPDATE_FAILED:

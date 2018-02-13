@@ -35,6 +35,7 @@ void ReceivedMessage(char* topic, byte* payload, unsigned int length) {//Setzt n
     case 'r': // Restart
       ESP.restart();
       break;
+
       
     case 'p': //LED Party mode
       LEDControl(1);
