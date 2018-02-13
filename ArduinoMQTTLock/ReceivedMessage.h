@@ -29,8 +29,8 @@ void ReceivedMessage(char* topic, byte* payload, unsigned int length) {//Setzt n
       LEDControl(1);  //Error LED Rot
       delay(2000);
       break;
-    case 'u':         //2 min Upsdate modus
-      updateState = 3000 + millis(); //close 
+    case 'u':         //Upsdate modus
+      updateState = 300 + millis(); //close 
       break;
     case 'r': // Restart
       ESP.restart();
