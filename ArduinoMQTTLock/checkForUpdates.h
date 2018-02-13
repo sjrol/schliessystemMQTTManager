@@ -2,8 +2,11 @@
 #define __CHECKFORUPDATES_H__
 
 void checkForUpdates() {
-  client.publish(String("/info").c_str(), String(ESPhttpUpdate.getLastErrorString()).c_str());
+  client.publish(String("/info").c_str(), String(ESPhttpUpdate.getLastErrorString()).c_str()); //Gibt, wenn vorhanden, letzten OTA Error aus
+  
   LEDControl(3);
+
+  //Generiertn String fuer Location der arduino.version datei
   String fwURL = String( fwUrlBase );
   fwURL.concat( "arduino" );
   String fwVersionURL = fwURL;
@@ -24,7 +27,7 @@ void checkForUpdates() {
 
     if( newVersion > FW_VERSION ) {
       client.publish(String("/info").c_str(), "Preparing to update" );
-
+      //Generiertn String fuer Location der arduino.version datei
       String fwImageURL = fwURL;
       fwImageURL.concat( ".bin" );
       client.publish(String("/info").c_str(), String(fwImageURL).c_str() );

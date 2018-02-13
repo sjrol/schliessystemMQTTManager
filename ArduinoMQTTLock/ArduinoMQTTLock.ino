@@ -1,28 +1,26 @@
-const int FW_VERSION = 1001;
-
-
+const int FW_VERSION = 1001;  //Firmware Muss identisch zu arduino.version sein 
 
 #include <ESP8266WiFi.h> //ESP Library
 #include <PubSubClient.h>  //MQTT Library
 #include "MFRC522.h" //RFID Library
 
-#include <ESP8266HTTPClient.h>
-#include <ESP8266httpUpdate.h>
+#include <ESP8266HTTPClient.h> //Library fuer http connect
+#include <ESP8266httpUpdate.h> //Library fuer http Update
 
-#include "LEDControl.h"
-#include "ReceivedMessage.h"
+#include "LEDControl.h" //Void fuer Led Setting
+#include "ReceivedMessage.h" //Void fuer MQTT input
 #include "ArduinoCredentials.h"// Wifi & OTA Zugang
 
 
-#define RST_PIN 16 //REsET PIN RFID Board
+#define RST_PIN 16 //RSsET PIN RFID Board
 #define SS_PIN  2 //Sync PIN RFID Board
 
 MFRC522 mfrc522(SS_PIN, RST_PIN); //RFID Board Setup
 
-String mac = WiFi.macAddress();
+String mac = WiFi.macAddress(); // Setzte MAC adresse als mac 
 int lastread = 0; // debounce RFID
-double relaisSet = 0;
-double relaisLastSet = 0;
+double relaisSet = 0; //relais zeit 
+double relaisLastSet = 0; //relais referenz
 
 //-------------------------------------
 //-------------------------------------
@@ -86,6 +84,7 @@ void setup() {
   //=========================================================================================================
 }
 
+// Include Updater nach der gesammmten init
 #include "checkForUpdates.h"
 
 //-------------------------------------
@@ -98,6 +97,8 @@ void loop() {
   //MQTT Abfrage rx tx
   if(!client.loop()) Connect();
 
+  
+// Update checker
   if (updateState - millis() >= 1) {
     checkForUpdates();
   }
