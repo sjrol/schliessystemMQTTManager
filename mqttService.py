@@ -26,6 +26,7 @@ def on_message(client, userdata, msg):
         print("Access denied for token %s" % (token))
 
 cnx = mariadb.connect(user = credentials.mariadbUser, password = credentials.mariadbPw, host =credentials.mariadbServer, database=credentials.mariadbUser) 
+cnx.autocommit(True)
 cursor = cnx.cursor()
 print("MQTT-Broker: " + credentials.mqttBrokerURL)
 client = mqtt.Client()
