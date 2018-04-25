@@ -1,4 +1,4 @@
-const int FW_VERSION = 1001;  //Firmware Muss identisch zu arduino.version sein 
+const int FW_VERSION = 1003;  //Firmware Muss identisch zu arduino.version sein 
 
 #include <ESP8266WiFi.h> //ESP Library
 #include <PubSubClient.h>  //MQTT Library
@@ -128,13 +128,11 @@ void loop() {
     }
 
 
-    long code = 0;
+    String code = "";
     for (byte i = 0; i < mfrc522.uid.size; i++) {
-      code = ((code + mfrc522.uid.uidByte[i]) * 10);
+      code = String(mfrc522.uid.uidByte[i], HEX) + code;
     }
-    char longcode [15];
-    sprintf(longcode,"%#015d",code);
-    client.publish(String("/" + mac).c_str(), longcode);
+    client.publish(String("/" + mac).c_str(), String(code).c_str());
     lastread = millis();
   } else if (messagerecieved == 0) {
     LEDControl(3);
