@@ -1,5 +1,6 @@
 credentials.py
 ArduinoCredentials.h
-arduino.bin
+*.bin
+*.version
 credentials.pyc
 __pycache__/*
