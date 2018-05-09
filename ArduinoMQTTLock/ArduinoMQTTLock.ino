@@ -128,11 +128,11 @@ void loop() {
     }
 
 
-    String code = "";
+    char code[128];
     for (byte i = 0; i < mfrc522.uid.size; i++) {
-      code = String(mfrc522.uid.uidByte[i], HEX) + code;
+      sprintf(code, "%02s%s", String(mfrc522.uid.uidByte[i], HEX).c_str(), code);
     }
-    client.publish(String("/" + mac).c_str(), String(code).c_str());
+    client.publish(String("/" + mac).c_str(), code);
     lastread = millis();
   } else if (messagerecieved == 0) {
     LEDControl(3);
