@@ -19,14 +19,14 @@ MFRC522 mfrc522(SS_PIN, RST_PIN); //RFID Board Setup
 
 String mac = WiFi.macAddress(); // Setzte MAC adresse als mac 
 int lastread = 0; // debounce RFID
-double relaisSet = 0; //relais zeit 
-double relaisLastSet = 0; //relais referenz
+double relaisSet = 0; //relais zeit (diese Var. beschreibt, wie lange das relais geoeffnet bleibt in ms)
+double relaisLastSet = 0; //relais referenzm (diese Var. ist die Referenz, auf die sich relaisSet bezieht)
 
 //-------------------------------------
 //-------------------------------------
 
 // Initialise the WiFi and MQTT Client objects
-WiFiClient wifiClient;
+WiFiClient wifiClient;  // ESP8266 soll als WLAN client fungieren(keinen AP oeffnen)
 PubSubClient client(mqtt_server, 1883, wifiClient); // 1883 is the listener port for the Broker
 
 //-------------------------------------
@@ -34,8 +34,8 @@ PubSubClient client(mqtt_server, 1883, wifiClient); // 1883 is the listener port
 
 bool Connect() {
   // Connect to MQTT Server and subscribe to the topic
-  if (client.connect((String(mac + " ID ").c_str()), mqtt_username, mqtt_password)) {
-    client.subscribe((String("/" + mac + "/state").c_str()));
+  if (client.connect((String(mac + " ID ").c_str()), mqtt_username, mqtt_password)) { //Publish MQTT in das Topic der eigenen MAC
+    client.subscribe((String("/" + mac + "/state").c_str())); // Subscribe MQTT auf das Topic /MAC/state
     return true;
   }
   else {
@@ -80,7 +80,7 @@ void setup() {
     Serial.println("Connection Failed!");
   }
 
-  client.publish(String("/info").c_str(), String("Hooray, " + mac + " is online now. Hello, my current IP is" + WiFi.localIP()).c_str());
+  client.publish(String("/info").c_str(), String("Hooray, " + mac + " is online now. Hello, my current IP is" + String(WiFi.localIP(), HEX)).c_str()); //Publisht Online Meldung auf MQTT /info inkl. MAC und current IP
   //=========================================================================================================
 }
 
@@ -92,14 +92,14 @@ void setup() {
 void loop() {
 
   //wifi reconnect
-  if (!client.connected()) Connect();
+  if (!client.connected()) Connect(); //wenn WLAN nicht verbunden, versuche reconnect
 
   //MQTT Abfrage rx tx
-  if(!client.loop()) Connect();
+  if(!client.loop()) Connect(); 
 
   
 // Update checker
-  if (updateState - millis() >= 1) {
+  if (updateState - millis() >= 1) { //loest aus, wenn ein u per MQTT eingegangen ist
     checkForUpdates();
   }
 
@@ -128,14 +128,15 @@ void loop() {
     }
 
 
-    String code = "";
+    String code = ""; //leert die Variable 
     for (byte i = 0; i < mfrc522.uid.size; i++) {
-      code = String(mfrc522.uid.uidByte[i], HEX) + code;
+      code = String(mfrc522.uid.uidByte[i], HEX) + code; //baut die UID in HEX 
+      if(code.length()<(i+1)*2) {"0" + code ;}
     }
-    client.publish(String("/" + mac).c_str(), String(code).c_str());
+    client.publish(String("/" + mac).c_str(), String(code).c_str()); //sendet die UID via MQTT
     lastread = millis();
   } else if (messagerecieved == 0) {
-    LEDControl(3);
+    LEDControl(3); 
   } else {
     //blank
   }
