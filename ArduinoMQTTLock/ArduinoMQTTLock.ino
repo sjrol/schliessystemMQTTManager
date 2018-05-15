@@ -1,4 +1,4 @@
-const int FW_VERSION = 1003;  //Firmware Muss identisch zu arduino.version sein 
+const int FW_VERSION = 1004;  //Firmware Muss identisch zu arduino.version sein 
 
 #include <ESP8266WiFi.h> //ESP Library
 #include <PubSubClient.h>  //MQTT Library
