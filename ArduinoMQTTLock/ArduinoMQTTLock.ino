@@ -1,4 +1,4 @@
-const int FW_VERSION = 1004;  //Firmware Muss identisch zu arduino.version sein 
+const int FW_VERSION = 1012;  //Firmware Muss identisch zu arduino.version sein 
 
 #include <ESP8266WiFi.h> //ESP Library
 #include <PubSubClient.h>  //MQTT Library
@@ -131,7 +131,9 @@ void loop() {
     String code = ""; //leert die Variable 
     for (byte i = 0; i < mfrc522.uid.size; i++) {
       code = String(mfrc522.uid.uidByte[i], HEX) + code; //baut die UID in HEX 
-      if(code.length()<(i+1)*2) {"0" + code ;}
+      if(code.length()<(i+1)*2) {
+        code = String("0") + code ;
+      }
     }
     client.publish(String("/" + mac).c_str(), String(code).c_str()); //sendet die UID via MQTT
     lastread = millis();
