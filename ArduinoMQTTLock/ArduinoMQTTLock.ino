@@ -1,7 +1,7 @@
-const int FW_VERSION = 1012;  //Firmware Muss identisch zu arduino.version sein 
-
+const int FW_VERSION = 1013;  //Firmware Muss identisch zu arduino.version sein 
+#include "Arduino.h"
 #include <ESP8266WiFi.h> //ESP Library
-#include <PubSubClient.h>  //MQTT Library
+#include <WebSocketClient.h> //Websockets Library
 #include "MFRC522.h" //RFID Library
 
 #include <ESP8266HTTPClient.h> //Library fuer http connect
@@ -10,7 +10,6 @@ const int FW_VERSION = 1012;  //Firmware Muss identisch zu arduino.version sein
 #include "LEDControl.h" //Void fuer Led Setting
 #include "ReceivedMessage.h" //Void fuer MQTT input
 #include "ArduinoCredentials.h"// Wifi & OTA Zugang
-
 
 #define RST_PIN 16 //RSsET PIN RFID Board
 #define SS_PIN  2 //Sync PIN RFID Board
@@ -27,23 +26,12 @@ double relaisLastSet = 0; //relais referenzm (diese Var. ist die Referenz, auf d
 
 // Initialise the WiFi and MQTT Client objects
 WiFiClient wifiClient;  // ESP8266 soll als WLAN client fungieren(keinen AP oeffnen)
-PubSubClient client(mqtt_server, 1883, wifiClient); // 1883 is the listener port for the Broker
 
-//-------------------------------------
-//-------------------------------------
+char server[] = "echo.websocket.org";
+WebSocketClient client;
 
-bool Connect() {
-  // Connect to MQTT Server and subscribe to the topic
-  if (client.connect((String(mac + " ID ").c_str()), mqtt_username, mqtt_password)) { //Publish MQTT in das Topic der eigenen MAC
-    client.subscribe((String("/" + mac + "/state").c_str())); // Subscribe MQTT auf das Topic /MAC/state
-    return true;
-  }
-  else {
-    return false;
-  }
-}
-//------------------------------------
-//-------------------------------------
+
+
 void setup() {
   //init rfid reader
   SPI.begin();
@@ -63,26 +51,12 @@ void setup() {
   // Wait until the connection has been confirmed before continuing
   while (WiFi.status() != WL_CONNECTED) {
     delay(500);
-    Serial.print(".");
   }
 
-  //DEBUG IP OUTPUT
-  Serial.print("IP address: ");
-  Serial.println(WiFi.localIP());
-
-  // Connect to MQTT Broker
-  // setCallback sets the function to be called when a message is received.
-  client.setCallback(ReceivedMessage);
-  if (Connect()) {
-    Serial.println("Connected Successfully to MQTT Broker!");
+  client.connect(websocket_server);
+  client.setDataArrivedDelegate(ReceivedMessage);
+ 
   }
-  else {
-    Serial.println("Connection Failed!");
-  }
-
-  client.publish(String("/info").c_str(), String("Hooray, " + mac + " is online now. Hello, my current IP is" + String(WiFi.localIP(), HEX)).c_str()); //Publisht Online Meldung auf MQTT /info inkl. MAC und current IP
-  //=========================================================================================================
-}
 
 // Include Updater nach der gesammmten init
 #include "checkForUpdates.h"
@@ -91,11 +65,9 @@ void setup() {
 //-------------------------------------
 void loop() {
 
-  //wifi reconnect
-  if (!client.connected()) Connect(); //wenn WLAN nicht verbunden, versuche reconnect
+  //wifi   if (!client.connected()) Connect(); //wenn WLAN nicht verbunden, versuche reconnect
 
-  //MQTT Abfrage rx tx
-  if(!client.loop()) Connect(); 
+  client.monitor();
 
   
 // Update checker
@@ -135,7 +107,7 @@ void loop() {
         code = String("0") + code ;
       }
     }
-    client.publish(String("/" + mac).c_str(), String(code).c_str()); //sendet die UID via MQTT
+    client.send(String(code)); //sendet die UID via MQTT
     lastread = millis();
   } else if (messagerecieved == 0) {
     LEDControl(3); 

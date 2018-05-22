@@ -7,9 +7,9 @@ double relaisState;
 bool messagerecieved = 0;
 double updateState;
 
-void ReceivedMessage(char* topic, byte* payload, unsigned int length) {//Setzt neue Nachrichten des rx Topics in Relaiszeiten um
+void ReceivedMessage(WebSocketClient client, String data) {//Setzt neue Nachrichten des rx Topics in Relaiszeiten um
   messagerecieved = 1;
-  switch ((char)payload[0]) {
+  switch ((char)data[0]) {
     case 's':
       relaisState = 3000 + millis(); //Kurz 3 sec 
       break;
