@@ -1,4 +1,4 @@
-const int FW_VERSION = 1012;  //Firmware Muss identisch zu arduino.version sein 
+const int FW_VERSION = 1014;  //Firmware Muss identisch zu arduino.version sein 
 
 #include <ESP8266WiFi.h> //ESP Library
 #include <PubSubClient.h>  //MQTT Library
@@ -59,6 +59,7 @@ void setup() {
   digitalWrite(D3, LOW);
 
   // Connect to the WiFi
+  WiFi.mode(WIFI_STA);
   WiFi.begin(ssid, wifi_password);
   // Wait until the connection has been confirmed before continuing
   while (WiFi.status() != WL_CONNECTED) {
