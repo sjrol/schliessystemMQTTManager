@@ -13,7 +13,6 @@ void setup() {
 
 
   // Connect to the WiFi
-  WiFi.mode(WIFI_STA);
   WiFi.begin(ssid, wifi_password);
   
   // Wait until the connection has been confirmed before continuing
