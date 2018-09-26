@@ -8,7 +8,7 @@
 
 void ota() {
   Serial.println("Update starting ...");
-  t_httpUpdate_return ret = ESPhttpUpdate.update(updateUrl, String(VERSION));
+  t_httpUpdate_return ret = ESPhttpUpdate.update(updateUrl, String(VERSION).c_str());
   switch(ret) {
     case HTTP_UPDATE_FAILED:
        Serial.println("Update failed.");

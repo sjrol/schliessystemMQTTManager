@@ -1,7 +1,17 @@
 <?PHP
-define(VERSION, 1016);
-
 header('Content-type: text/plain; charset=utf8', true);
+
+function get_file($url) {
+	$ch = curl_init();
+	curl_setopt($ch, CURLOPT_URL, $url);
+	curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
+	curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+	curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 5);
+	curl_setopt($ch, CURLOPT_USERAGENT, 'cURL');
+	$data = curl_exec($ch);
+	curl_close($ch);
+	return $data;
+}
 
 function check_header($name, $value = false) {
     if(!isset($_SERVER[$name])) {
@@ -11,15 +21,6 @@ function check_header($name, $value = false) {
         return false;
     }
     return true;
-}
-
-function sendFile($path) {
-    header($_SERVER["SERVER_PROTOCOL"].' 200 OK', true, 200);
-    header('Content-Type: application/octet-stream', true);
-    header('Content-Disposition: attachment; filename='.basename($path));
-    header('Content-Length: '.filesize($path), true);
-    header('x-MD5: '.md5_file($path), true);
-    readfile($path);
 }
 
 if(!check_header('HTTP_USER_AGENT', 'ESP8266-http-Update')) {
@@ -47,25 +48,25 @@ if(
  * $_SERVER['HTTP_X_ESP8266_VERSION']
  */
 
-$release = json_decode(file_get_contents('https://api.github.com/repos/sjrol/schliessystemMQTTManager/releases/latest'));
+$release = json_decode(get_file('https://api.github.com/repos/sjrol/schliessystemMQTTManager/releases/latest'), true);
 
-if(isset($db[$_SERVER['HTTP_X_ESP8266_STA_MAC']])) {
-    if($release['name'] != $_SERVER['HTTP_X_ESP8266_VERSION']) {
+if($release['name'] != $_SERVER['HTTP_X_ESP8266_VERSION']) {
 	foreach($release['assets'] as $asset) {
 		if($asset['name'] == 'arduino.bin') {
-			$file = file_get_contents($assets['browser_download_url']);
+			$file = get_file($asset['browser_download_url']);
 			header($_SERVER["SERVER_PROTOCOL"].' 200 OK', true, 200);
 			header('Content-Type: application/octet-stream', true);
 			header('Content-Disposition: attachment; filename='.$asset['name']);
 			header('Content-Length: '.$asset['size'], true);
 			header('x-MD5: '.md5($file), true);
 			echo($file);
+			break;
 		}
 	}
-    } else {
-        header($_SERVER["SERVER_PROTOCOL"].' 304 Not Modified', true, 304);
-    }
-    exit();
+	exit;
+} else {
+	header($_SERVER["SERVER_PROTOCOL"].' 304 Not Modified', true, 304);
+	exit;
 }
 
 header($_SERVER["SERVER_PROTOCOL"].' 500 no version for ESP MAC', true, 500);
