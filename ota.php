@@ -50,7 +50,7 @@ if(
 $release = json_decode(file_get_contents('https://api.github.com/repos/sjrol/schliessystemMQTTManager/releases/latest'));
 
 if(isset($db[$_SERVER['HTTP_X_ESP8266_STA_MAC']])) {
-    if($release['name'] != $_SERVER['HTTP_X_ESP8266_VERSION']) ) {
+    if($release['name'] != $_SERVER['HTTP_X_ESP8266_VERSION']) {
 	foreach($release['assets'] as $asset) {
 		if($asset['name'] == 'arduino.bin') {
 			$file = file_get_contents($assets['browser_download_url']);
