@@ -14,10 +14,14 @@ unsigned long rfid_nextReadAfter = 0;
 void rfid_loop() {
   if (!(rfid_nextReadAfter < millis()))
     return;
-  if (!mfrc522.PICC_IsNewCardPresent())
+  if (!mfrc522.PICC_IsNewCardPresent()) {
+    rfid_nextReadAfter = millis() + 200;
     return;
-  if (mfrc522.PICC_ReadCardSerial())
+  }
+  if (!mfrc522.PICC_ReadCardSerial()) {
+    rfid_nextReadAfter = millis() + 50;
     return;
+  }
     
   String code = "";
   for (byte i = 0; i < mfrc522.uid.size; i++) {
