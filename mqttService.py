@@ -29,7 +29,9 @@ def on_message(client, userdata, msg):
         log.close()
     else:
         client.publish(topic+"/state", str('e'))
+        log = db.cursor()
         log.execute("INSERT INTO `log` (`user`,`reader`,`result`) VALUES ((SELECT `user` FROM `token` WHERE `id` = '%s'), (SELECT `id` FROM `reader` WHERE `mac` = '%s'), 'e')" % (token, reader))
+        log.close()
         print("Access denied for token %s" % (token))
     cursor.close()
     db.commit()
