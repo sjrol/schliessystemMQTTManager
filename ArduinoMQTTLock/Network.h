@@ -46,7 +46,8 @@ bool mqtt_connect() {
   // Connect to MQTT Server and subscribe to the topic
   client.setCallback(onReceive);
   if (client.connect((String(mac).c_str()), mqtt_username, mqtt_password)) { // Connect with MAC as client ID
-    client.subscribe((String("/" + mac + "/state").c_str())); // Subscribe to topic /MAC/state
+    client.subscribe((String("/door/" + mac).c_str()));
+    client.subscribe((String("/reader/" + mac).c_str()));
     client.publish(String("/info").c_str(), String("Hooray, " + mac + " is online now. Hello, my current IP is " + WiFi.localIP().toString()).c_str());
     Serial.println("MQTT connected.");
     return true;
@@ -55,8 +56,8 @@ bool mqtt_connect() {
   return false;
 }
 
-bool mqtt_publish(const char* payload) {
-  client.publish(String("/" + mac).c_str(), payload);
+bool mqtt_publish_token(const char* payload) {
+  client.publish(String("/reader/" + mac + "/token").c_str(), payload);
 }
 
 void network_loop() {

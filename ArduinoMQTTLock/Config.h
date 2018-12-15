@@ -1,7 +1,7 @@
 #ifndef __CONFIG_H__
 #define __CONFIG_H__
 
-#define VERSION "v0.19"
+#define VERSION "v0.20"
 
 const char* ssid = "WLAN-SJR";  //Wlan ssid setzen
 const char* wifi_password = "SJR1994hdj"; // Wlan Passwort setzen

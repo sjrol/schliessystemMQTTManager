@@ -34,7 +34,7 @@ void rfid_loop() {
   Serial.print("Token read: ");
   Serial.println(code);
   led_set('y');
-  mqtt_publish(code.c_str());
+  mqtt_publish_token(code.c_str());
   rfid_nextReadAfter = millis() + 2000;
 }
 

@@ -1,7 +1,6 @@
 #ifndef __OTA_H__
 #define __OTA_H__
 
-#include <ESP8266HTTPClient.h> //Library fuer http connect
 #include <ESP8266httpUpdate.h> //Library fuer http Update
 
 #include "Config.h"
