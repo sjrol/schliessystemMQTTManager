@@ -32,6 +32,11 @@ def on_message(client, userdata, msg):
         log = db.cursor()
         log.execute("INSERT INTO `log` (`user`,`reader`,`relay`,`result`) VALUES %s" % (logstr[1:]))
         log.close()
+        corona_checkout = db.cursor()
+        corona_checkout.execute("SELECT COUNT(*) FROM `log` WHERE `user` = %s AND `relay` = 1 AND `timestamp` > CURRENT_TIMESTAMP()-30" % (userId))
+        (corona_count) = corona_checkout.pop()
+        if corona_count > 1:
+            client.publish("/reader/%s" % (reader), str('p'))
     else:
         client.publish("/reader/%s" % (reader), str('e'))
         log = db.cursor()
