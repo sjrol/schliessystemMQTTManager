@@ -38,12 +38,13 @@ def on_message(client, userdata, msg):
         log.close()
         if _relayId == 1: # Corona
             corona_checkout = db.cursor()
-            corona_checkout.execute("SELECT COUNT(*) FROM `log` WHERE `user` = %s AND `relay` = 1 AND `timestamp` > CURRENT_TIMESTAMP()-30" % (_userId))
+            corona_checkout.execute("SELECT COUNT(*) FROM `log` WHERE `user` = %s AND `relay` = 1 AND `timestamp` > CURRENT_TIMESTAMP()-10" % (_userId))
             corona_row = corona_checkout.fetchone()
             if corona_row is not None:
-                (corona_count) = corona_row
+                corona_count = corona_row[0]
                 if corona_count > 1:
                     client.publish("/reader/%s" % (reader), str('p'))
+                    print("Corona-Checkout performed for user %s on door %s with reader %s" % (userName, relayName, readerName))
             corona_checkout.close()
     else:
         client.publish("/reader/%s" % (reader), str('e'))
