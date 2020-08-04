@@ -19,7 +19,7 @@ def on_message(client, userdata, msg):
         return
     print("Got Token „%s“ from Reader „%s“ on Topic „%s“" % (token, reader, topic))
     cursor = db.cursor()
-    cursor.execute("SELECT `relay`.`id`, `relay`.`mac`, `user`.`id`, `user`.`name`, `reader`.`id`, `reader`.`name`, `relay`.`name` FROM `token` INNER JOIN `user` ON(`token`.`user` = `user`.`id`) INNER JOIN `user_relay` ON(`user`.`id` = `user_relay`.`user`) INNER JOIN `relay` ON(`user_relay`.`relay` = `relay`.`id`) INNER JOIN `reader_relay` ON(`relay`.`id` = `reader_relay`.`relay`) INNER JOIN `reader` ON(`reader_relay`.`reader` = `reader`.`id`) WHERE `token`.`id` = '%s' AND `reader`.`mac` = '%s'" % (token, reader))
+    cursor.execute("SELECT `relay`.`id`, `relay`.`mac`, `user`.`id`, `user`.`name`, `reader`.`id`, `reader`.`name`, `relay`.`name` FROM `token` INNER JOIN `user` ON(`token`.`user` = `user`.`id`) INNER JOIN `user_relay` ON(`user`.`id` = `user_relay`.`user`) INNER JOIN `relay` ON(`user_relay`.`relay` = `relay`.`id`) INNER JOIN `reader_relay` ON(`relay`.`id` = `reader_relay`.`relay`) INNER JOIN `reader` ON(`reader_relay`.`reader` = `reader`.`id`) WHERE `token`.`id` = '%s' AND `token`.`active` = `1` AND `reader`.`mac` = '%s'" % (token, reader))
     success = False
     logstr = ""
     _relayId = 0 # Corona
@@ -65,4 +65,3 @@ client.on_message = on_message
 client.connect(host=credentials.mqttBrokerURL)
 client.subscribe('/reader/+/token', 2)
 client.loop_forever()
-
