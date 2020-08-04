@@ -36,7 +36,7 @@ def on_message(client, userdata, msg):
         log = db.cursor()
         log.execute("INSERT INTO `log` (`user`,`reader`,`relay`,`result`) VALUES %s" % (logstr[1:]))
         log.close()
-        if _relayId == 1: # Corona
+        if _relayId == 1 or _relayId == 15: # Corona
             corona_checkout = db.cursor()
             corona_checkout.execute("SELECT COUNT(*) FROM `log` WHERE `user` = %s AND `relay` = 1 AND `timestamp` > CURRENT_TIMESTAMP()-10" % (_userId))
             corona_row = corona_checkout.fetchone()
